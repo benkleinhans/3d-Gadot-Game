@@ -117,9 +117,10 @@ func play_dash(is_air_dash: bool = false) -> void:
 	airborne = is_air_dash
 	landing = false
 
-	# Enter the dedicated root-level dash state.
-	playback.start(&"dash", true)
-
+	# Travel through the root StateMachine so the Dash transition's
+	# configured crossfade is used.
+	playback.travel(&"dash")
+	
 # Called by DashComponent when the dash movement duration expires.
 # Returns to the appropriate animation without interrupting Flow.
 func finish_dash() -> void:
@@ -129,7 +130,8 @@ func finish_dash() -> void:
 		return
 
 	if airborne:
-		playback.start(&"jump", true)
+	# Use the configured Dash → Jump crossfade after an air dash.
+		playback.travel(&"jump")
 	else:
 		_return_to_locomotion()
 ## Enters the jump state through the AnimationTree transition.
